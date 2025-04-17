@@ -10,13 +10,13 @@ import boto3
 from dotenv import load_dotenv
 
 # The folder where source files live
-DATA_FOLDER = "data-news-articles"
+DATA_FOLDER = "data-reviews"
 # How frequently to upload a file, in seconds
 UPLOAD_INTERVAL = 3
 # Total number of uploads to perform
-NUM_UPLOADS = 4
+NUM_UPLOADS = 1
 # The name of the s3 bucket you're uploading to
-S3_BUCKET_NAME = "ds4300-fontenot-project-bucket"
+S3_BUCKET_NAME = "ds4300review-bucket-raw"
 
 
 # Load the values from .env into dictionary
