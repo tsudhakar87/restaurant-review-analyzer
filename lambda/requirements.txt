@@ -1,0 +1,5 @@
+boto3
+pandas
+nltk
+textblob
+psycopg2-binary

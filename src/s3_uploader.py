@@ -40,9 +40,9 @@ def upload_to_s3(s3_client, file_path, bucket_name):
         with open(file_path, "rb") as file:
             safe_key = f"uploads/{Path(file_path).name.replace(' ', '_')}"
             s3_client.upload_fileobj(file, bucket_name, safe_key)
-        print(f"✅ Successfully uploaded {file_path.name} to S3 bucket '{bucket_name}'")
+        print(f"Successfully uploaded {file_path.name} to S3 bucket '{bucket_name}'")
     except Exception as e:
-        print(f"❌ Error uploading {file_path.name}: {str(e)}")
+        print(f"Error uploading {file_path.name}: {str(e)}")
 
 
 def main():
