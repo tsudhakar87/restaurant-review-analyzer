@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 DATA_FOLDER = "data-reviews"
 
 # Time interval between uploads in seconds
-UPLOAD_INTERVAL = 3
+UPLOAD_INTERVAL = 5
 
 # Total number of uploads to perform
 NUM_UPLOADS = 1
@@ -61,7 +61,7 @@ def main():
         aws_secret_access_key=aws_credentials["aws_secret_access_key"],
         region_name=aws_credentials["aws_region"],
     )
-
+ 
     print(f"📦 Starting S3 uploader. Uploading one CSV every {UPLOAD_INTERVAL} seconds...")
 
     count_uploads = 0

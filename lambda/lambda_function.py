@@ -4,6 +4,7 @@ import pymysql  # <- using pymysql instead of psycopg2
 import os
 import io
 import string
+import pandas as pd
 
 
 # Environment variables from AWS console
@@ -25,14 +26,16 @@ def clean_text(text):
 
 # Simple rule-based sentiment function
 def get_sentiment(text):
-    tokens = nltk.word_tokenize(text.translate(str.maketrans('', '', string.punctuation)))
+    text = text.translate(str.maketrans('', '', string.punctuation)).lower()
+    tokens = text.split()
     score = 0
     for word in tokens:
         if word in positive_words:
             score += 1
         elif word in negative_words:
             score -= 1
-    return score / len(tokens) if tokens else 0
+    return round(score / len(tokens), 3) if tokens else 0
+
 
 # Lambda handler function
 def lambda_handler(event, context):
