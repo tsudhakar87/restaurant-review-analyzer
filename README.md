@@ -1,6 +1,7 @@
-# S3 JSON Uploader
 
-A Python CLI application that randomly selects and uploads JSON files from a specified folder to an AWS S3 bucket at regular intervals.
+# Restaurant Review Analyzer – S3 JSON Uploader
+
+This Python CLI tool is part of a larger restaurant review analysis pipeline. It simulates streaming real-world restaurant reviews by randomly uploading JSON-formatted review files from a local folder to an AWS S3 bucket at fixed intervals. This makes it ideal for feeding downstream sentiment analysis and data ingestion systems.
 
 ## Requirements
 
@@ -73,8 +74,10 @@ A Python CLI application that randomly selects and uploads JSON files from a spe
    S3_BUCKET_NAME=your_bucket_name
    ```
 5. Update the configuration variables in `src/s3_uploader.py`:
-   - `DATA_FOLDER`: Path to your JSON files
-   - `UPLOAD_INTERVAL`: Time between uploads in seconds
+   ```
+   DATA_FOLDER = "data"  # Folder containing JSON restaurant reviews
+   UPLOAD_INTERVAL = 30  # Upload interval in seconds
+   ```
 
 ## Usage
 
@@ -97,12 +100,17 @@ The script will:
 
 ```
 .
-├── data-news-articles/     # Folder containing JSON files to upload
+├── data-reviews/     # Folder containing JSON files to upload
+├── lambda/
+├    └── requirements.txt
+├    └── lambda_function.py 
 ├── src/
-│   └── s3_uploader.py     # Main script
+│   └── s3_uploader.py
+└    ── appy.py
 ├── .env                   # AWS credentials (not in version control)
 ├── .env.example          # Template for .env file
 ├── requirements.txt      # Python dependencies
+├── lambda_function.zip
 └── README.md            # This file
 ```
 
