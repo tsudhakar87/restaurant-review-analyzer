@@ -1,6 +1,6 @@
 import json
 import boto3
-import pymysql  # <- using pymysql instead of psycopg2
+import pymysql  
 import os
 import io
 import string
@@ -12,7 +12,7 @@ DB_NAME = os.environ['DB_NAME']
 DB_USER = os.environ['DB_USER']
 DB_PASSWORD = os.environ['DB_PASSWORD']
 DB_HOST = os.environ['DB_HOST']
-DB_PORT = int(os.environ.get('DB_PORT', '3306'))  # MySQL default port
+DB_PORT = int(os.environ.get('DB_PORT', '3306')) 
 
 # Sample positive and negative word lists
 positive_words = {'good', 'great', 'excellent', 'amazing', 'fantastic', 'delicious', 'friendly', 'love', 'wonderful'}
@@ -89,7 +89,7 @@ def lambda_handler(event, context):
 
         conn.commit()
         cur.close()
-        conn.close()
+        conn.close() 
 
         return {
             'statusCode': 200,

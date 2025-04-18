@@ -5,8 +5,7 @@ import pymysql
 import matplotlib.pyplot as plt
 import os 
 
-# --- UI: File Upload to S3 ---
-st.title("📊 TripAdvisor Review Uploader + Dashboard")
+st.title("TripAdvisor Review Uploader + Dashboard")
 
 uploaded_file = st.file_uploader("Upload a CSV file", type="csv")
 
@@ -15,10 +14,10 @@ if uploaded_file:
     try:
         s3.upload_fileobj(
             uploaded_file,
-            "tripadvisor-raw-bucket",  # ✅ Your bucket name
+            "tripadvisor-raw-bucket", 
             f"uploads/{uploaded_file.name}"
         )
-        st.success("✅ File uploaded to S3 and is being processed!")
+        st.success("File uploaded to S3 and is being processed!")
     except Exception as e:
         st.error(f"Upload failed: {e}")
 
@@ -26,7 +25,7 @@ st.markdown("---")
 
 
 
-# --- Function to Load Data from RDS ---
+# Function to Load Data from RDS 
 @st.cache_data(ttl=60)
 def load_reviews():
     try:
@@ -45,22 +44,22 @@ def load_reviews():
         st.error(f"Failed to connect to RDS: {e}")
         return pd.DataFrame()
 
-# --- Display Data + Visualizations ---
-if st.button("📥 Load Review Data"):
+# Display Data + Visualizations 
+if st.button("Load Review Data"):
     df = load_reviews()
 
     if not df.empty:
-        st.subheader("📋 Raw Review Table")
+        st.subheader("Raw Review Table")
         st.dataframe(df.head(20))
 
-        st.subheader("📈 Sentiment Distribution")
+        st.subheader("Sentiment Distribution")
         fig1, ax1 = plt.subplots()
         df['sentiment'].hist(bins=20, ax=ax1)
         ax1.set_xlabel("Sentiment Score")
         ax1.set_ylabel("Count")
         st.pyplot(fig1)
 
-        st.subheader("🍽️ Avg Sentiment by Category")
+        st.subheader("Avg Sentiment by Category")
         cat_sent = df.groupby("category")["sentiment"].mean().sort_values(ascending=False)
         st.bar_chart(cat_sent)
     else:
