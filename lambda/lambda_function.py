@@ -1,37 +1,40 @@
 import json
 import boto3
-import pandas as pd
-import nltk
-from textblob import TextBlob # use this library for sentiment analysis
-import psycopg2 #postgresql database adapter
+import pymysql  # <- using pymysql instead of psycopg2
 import os
 import io
+import string
 
-nltk.download('punkt')
 
-# env variables of rds instance from aws console
+# Environment variables from AWS console
 DB_NAME = os.environ['DB_NAME']
 DB_USER = os.environ['DB_USER']
 DB_PASSWORD = os.environ['DB_PASSWORD']
 DB_HOST = os.environ['DB_HOST']
-DB_PORT = os.environ.get('DB_PORT', '5432')
+DB_PORT = int(os.environ.get('DB_PORT', '3306'))  # MySQL default port
 
-# clean text
+# Sample positive and negative word lists
+positive_words = {'good', 'great', 'excellent', 'amazing', 'fantastic', 'delicious', 'friendly', 'love', 'wonderful'}
+negative_words = {'bad', 'terrible', 'awful', 'worst', 'slow', 'unfriendly', 'disgusting', 'rude', 'hate'}
+
+# Clean text
 def clean_text(text):
     if pd.isna(text):
         return ""
-    return text.replace('\n', ' ').strip()
+    return text.replace('\n', ' ').strip().lower()
 
-# use text blob library to get sentiment
+# Simple rule-based sentiment function
 def get_sentiment(text):
-    return TextBlob(text).sentiment.polarity
-    # from documentation:
-        # The polarity score is a float within the range [-1.0, 1.0]. 
-        # The subjectivity is a float within the range [0.0, 1.0] 
-        # where 0.0 is very objective and 1.0 is very subjective.
+    tokens = nltk.word_tokenize(text.translate(str.maketrans('', '', string.punctuation)))
+    score = 0
+    for word in tokens:
+        if word in positive_words:
+            score += 1
+        elif word in negative_words:
+            score -= 1
+    return score / len(tokens) if tokens else 0
 
-# lambda function
-# boto3: AWS SDK to connect to AWS services
+# Lambda handler function
 def lambda_handler(event, context):
     s3 = boto3.client('s3')
     bucket = event['Records'][0]['s3']['bucket']['name']
@@ -41,19 +44,19 @@ def lambda_handler(event, context):
     response = s3.get_object(Bucket=bucket, Key=key)
     df = pd.read_csv(io.BytesIO(response['Body'].read()))
 
-    # Rename columns for consistency
+    # Standardize column names
     df.columns = df.columns.str.strip()
-    
     df['Review Comment'] = df['Reveiw Comment'].apply(clean_text)
     df['Sentiment'] = df['Review Comment'].apply(get_sentiment)
 
     try:
-        conn = psycopg2.connect(
-            dbname=DB_NAME,
+        conn = pymysql.connect(
+            host=DB_HOST,
             user=DB_USER,
             password=DB_PASSWORD,
-            host=DB_HOST,
-            port=DB_PORT
+            database=DB_NAME,
+            port=DB_PORT,
+            cursorclass=pymysql.cursors.DictCursor
         )
         cur = conn.cursor()
 
