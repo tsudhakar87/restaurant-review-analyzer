@@ -17,7 +17,7 @@ DB_PORT = int(os.environ.get('DB_PORT', '3306'))  # MySQL default port
 # Sample positive and negative word lists
 positive_words = {'good', 'great', 'excellent', 'amazing', 'fantastic', 'delicious', 'friendly', 'love', 'wonderful'}
 negative_words = {'bad', 'terrible', 'awful', 'worst', 'slow', 'unfriendly', 'disgusting', 'rude', 'hate'}
-
+ 
 # Clean text
 def clean_text(text):
     if pd.isna(text):
@@ -39,6 +39,8 @@ def get_sentiment(text):
 
 # Lambda handler function
 def lambda_handler(event, context):
+    print("✅ Lambda Triggered")
+    print("Event:", json.dumps(event))
     s3 = boto3.client('s3')
     bucket = event['Records'][0]['s3']['bucket']['name']
     key = event['Records'][0]['s3']['object']['key']
